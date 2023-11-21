@@ -12,14 +12,27 @@ import com.andre.guryanov.cryptoapptest.R
 import com.andre.guryanov.cryptoapptest.databinding.ActivityCoinDetailBinding
 import com.andre.guryanov.cryptoapptest.databinding.FragmentCoinDetailBinding
 import com.squareup.picasso.Picasso
+import javax.inject.Inject
 
 class CoinDetailFragment : Fragment() {
 
     private var _binding: FragmentCoinDetailBinding? = null
     private val binding: FragmentCoinDetailBinding
         get() = _binding ?: throw java.lang.RuntimeException("FragmentCoinDetailBinding is null")
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
     private lateinit var viewModel: CoinViewModel
     val name = "CoinDetailFragment"
+
+    private val component by lazy {
+        (requireActivity().application as CoinApp).component
+    }
+
+
+    override fun onAttach(context: Context) {
+        component.inject(this)
+        super.onAttach(context)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,7 +53,7 @@ class CoinDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel = ViewModelProvider(this)[CoinViewModel::class.java]
+        viewModel = ViewModelProvider(this, viewModelFactory)[CoinViewModel::class.java]
         initObservers()
     }
 

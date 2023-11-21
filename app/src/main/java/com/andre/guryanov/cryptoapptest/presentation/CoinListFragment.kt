@@ -1,5 +1,6 @@
 package com.andre.guryanov.cryptoapptest.presentation
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.andre.guryanov.cryptoapptest.databinding.FragmentCoinListBinding
 import com.andre.guryanov.cryptoapptest.presentation.adapters.CoinInfoAdapter
+import javax.inject.Inject
 
 class CoinListFragment : Fragment() {
 
@@ -15,8 +17,20 @@ class CoinListFragment : Fragment() {
     private val binding: FragmentCoinListBinding
         get() = _binding ?: throw java.lang.RuntimeException("FragmentCoinListBinding is null")
 
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
     private lateinit var viewModel: CoinViewModel
 
+    private val component by lazy {
+        (requireActivity().application as CoinApp).component
+    }
+
+
+    override fun onAttach(context: Context) {
+        component.inject(this)
+        super.onAttach(context)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,7 +46,7 @@ class CoinListFragment : Fragment() {
         val adapter = CoinInfoAdapter(requireContext())
 
         binding.rvCoinPriceList.adapter = adapter
-        viewModel = ViewModelProvider(this)[CoinViewModel::class.java]
+        viewModel = ViewModelProvider(this, viewModelFactory)[CoinViewModel::class.java]
         viewModel.coinInfoList.observe(viewLifecycleOwner) {
             adapter.submitList(it)
         }

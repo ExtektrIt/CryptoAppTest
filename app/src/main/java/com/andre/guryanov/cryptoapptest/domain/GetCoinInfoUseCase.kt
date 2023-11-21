@@ -1,6 +1,8 @@
 package com.andre.guryanov.cryptoapptest.domain
 
-class GetCoinInfoUseCase(
+import javax.inject.Inject
+
+class GetCoinInfoUseCase @Inject constructor(
     private val repo: CoinRepository,
 ) {
 
